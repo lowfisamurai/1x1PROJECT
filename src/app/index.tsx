@@ -1,98 +1,111 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from "expo-router";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+const MODULOS = [
+  {
+    id: "corpo",
+    titulo: "🔴 Corpo",
+    cor: "#b91c1c",
+    subtitulo: "Treinos, Progressão e ELO",
+  },
+  {
+    id: "mente",
+    titulo: "🟡 Mente",
+    cor: "#eab308",
+    subtitulo: "Journal, Projetos e Notas",
+  },
+  {
+    id: "bolso",
+    titulo: "🟢 Bolso",
+    cor: "#16a34a",
+    subtitulo: "Finanças, Gastos e Metas",
+  },
+  {
+    id: "estudos",
+    titulo: "🔵 Estudos",
+    cor: "#2563eb",
+    subtitulo: "Pomodoro e Matérias",
+  },
+  {
+    id: "roteiros",
+    titulo: "🟣 Roteiros",
+    cor: "#4f46e5",
+    subtitulo: "Sincronização com Notion",
+  },
+];
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+export default function Home() {
+  const router = useRouter();
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.saudacao}>Segundo Cérebro</Text>
+        <Text style={styles.subtituloHeader}>
+          Selecione o módulo para iniciar
+        </Text>
+      </View>
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      <View style={styles.grid}>
+        {MODULOS.map((modulo) => (
+          <Pressable
+            key={modulo.id}
+            style={[styles.card, { backgroundColor: modulo.cor }]}
+            onPress={() => router.push(`/${modulo.id}`)}
+          >
+            <Text style={styles.cardTitulo}>{modulo.titulo}</Text>
+            <Text style={styles.cardSubtitulo}>{modulo.subtitulo}</Text>
+          </Pressable>
+        ))}
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    backgroundColor: "#121212",
+    paddingHorizontal: 20,
+    paddingTop: 60,
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+  header: {
+    marginBottom: 32,
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+  saudacao: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#ffffff",
   },
-  title: {
-    textAlign: 'center',
+  subtituloHeader: {
+    fontSize: 16,
+    color: "#a1a1aa",
+    marginTop: 4,
   },
-  code: {
-    textTransform: 'uppercase',
+  grid: {
+    gap: 16, // Espaçamento entre os cards
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  card: {
+    padding: 24,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
+    minHeight: 110,
+    justifyContent: "center",
+  },
+  cardTitulo: {
+    fontSize: 22,
+    fontWeight: "900",
+    color: "#ffffff",
+    letterSpacing: 0.5,
+  },
+  cardSubtitulo: {
+    fontSize: 14,
+    color: "rgba(255, 255, 255, 0.8)",
+    marginTop: 6,
+    fontWeight: "500",
   },
 });
